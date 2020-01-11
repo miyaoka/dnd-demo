@@ -1,0 +1,7 @@
+Root:
+  - B.a:
+    - L.a-a
+    - L.a-b
+  - B.b:
+  	- B.b-a:
+      - L.b-a-a

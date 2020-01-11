@@ -1,0 +1,26 @@
+{
+  "tag": "section",
+  "class": ["container"],
+  "style": {
+    "padding": "20px"
+  },
+  "children": [
+    {
+      "text": "child1",
+      "style": {
+        "width": "300px",
+        "height": "200px"
+      }
+    },
+    {
+      "style": {
+        "padding": "20px"
+      }
+    },
+    {
+      "style": {
+        "padding": "20px"
+      }
+    }
+  ]
+}
