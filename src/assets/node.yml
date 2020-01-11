@@ -1,7 +1,11 @@
 Root:
   - B.a:
-    - L.a-a
-    - L.a-b
+      - L.a-a
+      - L.a-b
   - B.b:
-  	- B.b-a:
-      - L.b-a-a
+      - B.b-a:
+          - L.b-a-a
+      - B.b-b:
+          - B.b-b-a:
+              - L.b-b-a-a
+      - L.b-c
