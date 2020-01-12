@@ -5,7 +5,7 @@ export default Vue.component('TreeRenderer', {
   functional: true,
   props: {
     node: {
-      type: [Object, String] as PropType<Node>,
+      type: Object as PropType<Node>,
       required: true
     },
     select: {
