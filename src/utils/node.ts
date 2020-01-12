@@ -12,7 +12,7 @@ const nodeOrder = (node: Node): number => {
   return node.children ? -10 : 0
 }
 
-export const moveNode = (tree: Node, from: string, to: string): Node => {
+export const moveNode = (tree: Node, fromId: string, toId: string): Node => {
   const clonedTree = JSON.parse(JSON.stringify(tree))
   const map = nodeMap(clonedTree)
 
@@ -23,32 +23,42 @@ export const moveNode = (tree: Node, from: string, to: string): Node => {
     }
     return obj
   }
+  const getAncestors = (id: string): string[] => {
+    const node = getNode(id)
+    if (!node.parent) return [id]
+    return [id, ...getAncestors(node.parent)]
+  }
 
   // remove
-  const fromNode = getNode(from)
-  const toNode = getNode(to)
+  const fromNode = getNode(fromId)
+  const toNode = getNode(toId)
 
   if (!fromNode.parent) {
-    throw Error(`can't move root node.`)
+    throw Error(`Can't move the root node.`)
+  }
+  if (getAncestors(toId).some(ancId => ancId === fromId)) {
+    throw Error(`Can't move to self or self children.`)
   }
   const parent = getNode(fromNode.parent)
-  if (!parent || !parent.node.children) {
-    throw Error(`no children.`)
-  }
   const parentChildren = parent.node.children
+  if (!parentChildren) {
+    throw Error(`Parent has no children. (something wrong)`)
+  }
 
   const fromIndex = parentChildren.findIndex(
     parentChild => parentChild === fromNode.node
   )
   if (fromIndex < 0) {
-    throw Error(`not exist in parent children.`)
+    throw Error(
+      `Selecting node is not exist in the parent children. (something wrong)`
+    )
   }
-  parent.node.children.splice(fromIndex, 1)
+  parentChildren.splice(fromIndex, 1)
 
   // push
   const toChildren = toNode.node.children
   if (!toChildren) {
-    throw Error(`can't move to leaf node.`)
+    throw Error(`Can't move to leaf node.`)
   }
   toChildren.push(fromNode.node)
   toChildren.sort(
