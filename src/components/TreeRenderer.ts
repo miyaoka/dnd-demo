@@ -14,10 +14,10 @@ export default Vue.component('TreeRenderer', {
     }
   },
   render(h, { props }): VNode {
-    const onHandler = (nodeName: string) => ({
+    const onHandler = (nodeId: string) => ({
       click: (e: MouseEvent) => {
         e.stopPropagation()
-        select(nodeName)
+        select(nodeId)
       }
     })
 
