@@ -15,7 +15,8 @@ export default Vue.component('TreeRenderer', {
   },
   render(h, { props }): VNode {
     const onHandler = (nodeName: string) => ({
-      click: () => {
+      click: (e: MouseEvent) => {
+        e.stopPropagation()
         select(nodeName)
       }
     })
