@@ -11,7 +11,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import TreeRenderer from '@/components/TreeRenderer'
-import tree from '@/assets/node.json'
+import tree from '@/assets/tree.json'
 
 export default Vue.extend({
   name: 'home',
