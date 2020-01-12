@@ -3,14 +3,14 @@
   "children": [
     {
       "id": "A",
-      "children": [{ "id": "A0" }, { "id": "A2" }]
+      "children": [{ "id": "A0" }, { "id": "A1" }, { "id": "A2" }]
     },
     {
       "id": "B",
       "children": [
         {
           "id": "BA",
-          "children": [{ "id": "BA0" }]
+          "children": [{ "id": "BA0" }, { "id": "BA1" }]
         },
         {
           "id": "BB",
@@ -21,8 +21,8 @@
             }
           ]
         },
-        { "id": "A1" },
-        { "id": "B0" }
+        { "id": "B0" },
+        { "id": "B1" }
       ]
     }
   ]

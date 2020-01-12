@@ -1,47 +1,94 @@
 <template>
   <div class="home">
-    <div>selectedNode: {{ selectedNode }}</div>
-    <label v-if="selectedNode">
-      move: <input type="checkbox" v-model="isMove" />
-    </label>
-    <TreeRenderer :node="tree" :select="onSelect" />
+    <div class="container">
+      <TreeRenderer :node="tree" :select="onSelect" />
+      <div class="menu">
+        <div>selectedNodeId: {{ selectedNodeId }}</div>
+        <div class="error" v-if="errorText">{{ errorText }}</div>
+        <textarea :value="JSON.stringify(tree, null, 4)" />
+        <StyleRenderer :text="selectedStyle" />
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import TreeRenderer from '@/components/TreeRenderer'
+import StyleRenderer from '@/components/StyleRenderer'
 import tree from '@/assets/tree.json'
+import { moveNode } from '@/utils/node'
+import { Node } from '@/types/node'
+
+const selectedStyle = `{
+  background: #ff0!important
+}`
 
 export default Vue.extend({
-  name: 'home',
   data() {
     return {
-      tree,
-      selectedNode: '',
-      isMove: false
+      tree: tree as Node,
+      selectedNodeId: '',
+      errorText: ''
     }
   },
   components: {
-    TreeRenderer
+    TreeRenderer,
+    StyleRenderer
+  },
+  computed: {
+    selectedStyle(): string {
+      return this.selectedNodeId
+        ? `div[data-node-id="${this.selectedNodeId}"]${selectedStyle}`
+        : ''
+    }
   },
   methods: {
     onSelect(nodeName: string) {
-      if (this.isMove) {
-        this.mv(this.selectedNode, nodeName)
+      this.errorText = ''
+      if (this.selectedNodeId) {
+        this.mv(this.selectedNodeId, nodeName)
         return
       }
-      this.selectedNode = nodeName
+      this.selectedNodeId = nodeName
     },
     mv(from: string, to: string) {
-      console.log(from, to)
+      try {
+        this.tree = moveNode(this.tree, from, to)
+      } catch (e) {
+        this.errorText = e.message
+      } finally {
+        this.selectedNodeId = ''
+      }
     }
   }
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+.container {
+  display: flex;
+}
+.menu {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+
+  textarea {
+    display: flex;
+    flex: auto;
+  }
+}
+.error {
+  color: #f00;
+}
+</style>
+
+<style lang="scss">
 .branch-container {
+  display: flex;
+  flex-direction: column;
+  flex: auto;
   background: rgba(rgb(151, 151, 151), 0.2);
 }
 .leaf,
@@ -61,6 +108,9 @@ export default Vue.extend({
   flex-direction: row;
   &::before {
     padding: 0 0.5em 0 0.1em;
+  }
+  &:hover {
+    opacity: 0.7;
   }
 }
 .leaf {

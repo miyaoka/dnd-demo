@@ -28,7 +28,10 @@ export default Vue.component('TreeRenderer', {
         'div',
         {
           class: className,
-          on: onHandler(id)
+          on: onHandler(id),
+          attrs: {
+            'data-node-id': id
+          }
         },
         id
       )
