@@ -1,21 +1,28 @@
 {
-  "Root": [
+  "id": "Root",
+  "children": [
     {
-      "B.a": ["L.a-a", "L.a-b"]
+      "id": "A",
+      "children": [{ "id": "A0" }, { "id": "A2" }]
     },
     {
-      "B.b": [
+      "id": "B",
+      "children": [
         {
-          "B.b-a": ["L.b-a-a"]
+          "id": "BA",
+          "children": [{ "id": "BA0" }]
         },
         {
-          "B.b-b": [
+          "id": "BB",
+          "children": [
             {
-              "B.b-b-a": ["L.b-b-a-a"]
+              "id": "BBA",
+              "children": [{ "id": "BBA0" }]
             }
           ]
         },
-        "L.b-c"
+        { "id": "A1" },
+        { "id": "B0" }
       ]
     }
   ]

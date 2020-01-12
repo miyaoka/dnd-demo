@@ -1,15 +1,11 @@
 import Vue, { PropType, VNode } from 'vue'
-import { Node, Leaf, Branch } from '@/types/node'
-
-const isLeaf = (node: Node): node is Leaf => {
-  return typeof node === 'string'
-}
+import { Node } from '@/types/node'
 
 export default Vue.component('TreeRenderer', {
   functional: true,
   props: {
     node: {
-      type: [Object, String] as PropType<Branch | Leaf>,
+      type: [Object, String] as PropType<Node>,
       required: true
     },
     select: {
@@ -17,7 +13,7 @@ export default Vue.component('TreeRenderer', {
       required: true
     }
   },
-  render(h, { props }): VNode | VNode[] {
+  render(h, { props }): VNode {
     const onHandler = (nodeName: string) => ({
       click: () => {
         select(nodeName)
@@ -25,32 +21,28 @@ export default Vue.component('TreeRenderer', {
     })
 
     const { node, select } = props
-    if (isLeaf(node)) {
+    const { id, children } = node
+
+    const nodeElement = (className: string) => {
       return h(
         'div',
         {
-          class: 'leaf',
-          on: onHandler(node)
+          class: className,
+          on: onHandler(id)
         },
-        node
+        id
       )
     }
 
-    const [key, children] = Object.entries(node)[0]
+    if (!children) return nodeElement('leaf')
+
     return h(
       'div',
       {
         class: 'branch-container'
       },
       [
-        h(
-          'div',
-          {
-            class: 'branch',
-            on: onHandler(key)
-          },
-          key
-        ),
+        nodeElement('branch'),
         h(
           'div',
           {
