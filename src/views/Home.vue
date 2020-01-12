@@ -1,20 +1,25 @@
 <template>
   <div class="home">
-    <div>selected: {{ selectedNode }}</div>
+    <div>selectedNode: {{ selectedNode }}</div>
+    <label v-if="selectedNode">
+      move: <input type="checkbox" v-model="isMove" />
+    </label>
     <TreeRenderer :node="tree" :select="onSelect" />
   </div>
 </template>
 
 <script lang="ts">
+import Vue from 'vue'
 import TreeRenderer from '@/components/TreeRenderer'
 import tree from '@/assets/node.json'
 
-export default {
+export default Vue.extend({
   name: 'home',
   data() {
     return {
       tree,
-      selectedNode: ''
+      selectedNode: '',
+      isMove: false
     }
   },
   components: {
@@ -22,10 +27,17 @@ export default {
   },
   methods: {
     onSelect(nodeName: string) {
+      if (this.isMove) {
+        this.mv(this.selectedNode, nodeName)
+        return
+      }
       this.selectedNode = nodeName
+    },
+    mv(from: string, to: string) {
+      console.log(from, to)
     }
   }
-}
+})
 </script>
 
 <style lang="scss" scoped>

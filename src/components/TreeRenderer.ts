@@ -1,8 +1,5 @@
 import Vue, { PropType, VNode } from 'vue'
-
-export type Node = Branch | Leaf
-export type Branch = Record<string, Node[]>
-export type Leaf = string
+import { Node, Leaf, Branch } from '@/types/node'
 
 const isLeaf = (node: Node): node is Leaf => {
   return typeof node === 'string'
@@ -22,7 +19,7 @@ export default Vue.component('TreeRenderer', {
   },
   render(h, { props }): VNode | VNode[] {
     const onHandler = (nodeName: string) => ({
-      click: (e: MouseEvent) => {
+      click: () => {
         select(nodeName)
       }
     })
@@ -40,34 +37,32 @@ export default Vue.component('TreeRenderer', {
     }
 
     const [key, children] = Object.entries(node)[0]
-    return [
-      h(
-        'div',
-        {
-          class: 'branch-container'
-        },
-        [
-          h(
-            'div',
-            {
-              class: 'branch',
-              on: onHandler(key)
-            },
-            key
-          ),
-          h(
-            'div',
-            {
-              class: 'children'
-            },
-            children.map(child =>
-              h('TreeRenderer', {
-                props: { ...props, node: child }
-              })
-            )
+    return h(
+      'div',
+      {
+        class: 'branch-container'
+      },
+      [
+        h(
+          'div',
+          {
+            class: 'branch',
+            on: onHandler(key)
+          },
+          key
+        ),
+        h(
+          'div',
+          {
+            class: 'children'
+          },
+          children.map(child =>
+            h('TreeRenderer', {
+              props: { ...props, node: child }
+            })
           )
-        ]
-      )
-    ]
+        )
+      ]
+    )
   }
 })
