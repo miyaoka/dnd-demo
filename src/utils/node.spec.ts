@@ -93,5 +93,25 @@ const after2: Node = {
   ]
 }
 
-test('move leaf', () => expect(moveNode(baseTree, 'A1', 'B')).toEqual(after1))
-test('move branch', () => expect(moveNode(baseTree, 'BA', 'A')).toEqual(after2))
+test('Move leaf', () => expect(moveNode(baseTree, 'A1', 'B')).toEqual(after1))
+test('Move branch', () => expect(moveNode(baseTree, 'BA', 'A')).toEqual(after2))
+test('Move to self', () =>
+  expect(() => moveNode(baseTree, 'A1', 'A1')).toThrow(
+    "Can't move to self or self children."
+  ))
+test('Move to self children', () =>
+  expect(() => moveNode(baseTree, 'B', 'BBA')).toThrow(
+    "Can't move to self or self children."
+  ))
+test('Select non-exist node(from)', () =>
+  expect(() => moveNode(baseTree, 'A1', 'nonExistNode')).toThrow(
+    "'nonExistNode' is not exist."
+  ))
+test('Select non-exist node(to)', () =>
+  expect(() => moveNode(baseTree, 'nonExistNode', 'B')).toThrow(
+    "'nonExistNode' is not exist."
+  ))
+test('Move root node', () =>
+  expect(() => moveNode(baseTree, 'Root', 'B')).toThrow(
+    "Can't move the root node."
+  ))
