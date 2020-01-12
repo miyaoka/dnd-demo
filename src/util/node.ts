@@ -1,3 +1,10 @@
 import { Node, Leaf, Branch } from '@/types/node'
 
-const mv = (tree: Node, from: string, to: string) => { }
+export const mv = (
+  tree: Node,
+  from: string,
+  to: string,
+  index: number
+): Node => {
+  return tree
+}
