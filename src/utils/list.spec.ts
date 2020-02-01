@@ -2,13 +2,10 @@ import { mv } from './list'
 
 const list = ['A', 'B', 'C', 'D', 'E']
 
-test('CをAの位置に移動', () =>
-  expect(mv(list, 2, 0)).toEqual('CABDE'.split('')))
-test('CをCの位置にに移動', () => expect(mv(list, 2, 2)).toEqual(list))
-test('CをDの位置に移動', () =>
-  expect(mv(list, 2, 3)).toEqual('ABDCE'.split('')))
-test('AをEの位置に移動', () =>
-  expect(mv(list, 0, 4)).toEqual('BCDEA'.split('')))
+test('C->A', () => expect(mv(list, 2, 0)).toEqual('CABDE'.split('')))
+test('C->C', () => expect(mv(list, 2, 2)).toEqual(list))
+test('C->D', () => expect(mv(list, 2, 3)).toEqual('ABDCE'.split('')))
+test('A->E', () => expect(mv(list, 0, 4)).toEqual('BCDEA'.split('')))
 
 test('インデックスオーバー時は最後尾へ', () =>
   expect(mv(list, 2, 8)).toEqual('ABDEC'.split('')))
