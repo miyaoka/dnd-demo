@@ -8,6 +8,12 @@ type NodeMap = Record<
   }
 >
 
+const mv = (source: string | string[], target: string) => {
+  return true
+}
+
+const aa = typeof mv
+
 const nodeOrder = (node: Node): number => {
   return node.children ? -10 : 0
 }
