@@ -1,16 +1,19 @@
 <template>
-  <ul class="items" :class="{ isDragging: fromIndex >= 0 }">
+  <div>
     <p>{{ fromIndex }} -> {{ toIndex }}</p>
-    <li
-      v-for="(item, i) in list"
-      :key="i"
-      @mousedown="e => onDragStart(e, i)"
-      :style="draggingStyles[i]"
-      :class="{ isDragging: fromIndex === i }"
-    >
-      {{ item }} ({{ i }})
-    </li>
-  </ul>
+
+    <ul class="items" :class="{ isDragging: fromIndex >= 0 }">
+      <li
+        v-for="(item, i) in list"
+        :key="i"
+        @mousedown="e => onDragStart(e, i)"
+        :style="draggingStyles[i]"
+        :class="{ isDragging: fromIndex === i }"
+      >
+        {{ item }} ({{ i }})
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script lang="ts">
@@ -20,7 +23,7 @@ import { mv } from '@/utils/list'
 export default Vue.extend({
   data() {
     return {
-      list: 'ABCDEFG'.split(''),
+      list: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''),
       fromIndex: -1,
       toIndex: -1,
       dragStartY: 0,
@@ -33,9 +36,14 @@ export default Vue.extend({
   },
   methods: {
     getTranslate(index: number) {
-      if (this.fromIndex === index) return this.deltaY
-      else if (index < this.toIndex) return null
-      else if (index > this.toIndex) return 1 * this.draggingRect.height
+      if (this.fromIndex === index)
+        return Math.min(
+          this.draggingRect.height * (this.list.length - this.fromIndex - 1),
+          Math.max(-this.draggingRect.height * this.fromIndex, this.deltaY)
+        )
+
+      const i = index < this.fromIndex ? index + 1 : index
+      if (i > this.toIndex) return this.draggingRect.height
       return null
     },
 
@@ -68,13 +76,23 @@ export default Vue.extend({
     onDrag(e: MouseEvent) {
       this.deltaY = e.pageY - this.dragStartY
       this.toIndex =
-        Math.floor(this.deltaY / this.draggingRect.height + 0.5) +
-        this.fromIndex
+        this.fromIndex +
+        Math.floor(this.deltaY / this.draggingRect.height + 0.5)
+
+      const getTranslate = (index: number) => {
+        // ドラッグ要素
+        if (this.fromIndex === index) return this.deltaY
+        // ドラッグ要素より前の要素はindex加算
+        const adjustedIndex = index < this.fromIndex ? index + 1 : index
+        // ドラッグ先より後ろの要素はずらす
+        if (adjustedIndex > this.toIndex) return this.draggingRect.height
+        // それ以外はstyle設定しない
+        return null
+      }
 
       const styles = this.list.map((_item, index) => {
-        const diff = this.getTranslate(index)
-        if (diff == null) return null
-        return { transform: `translateY(${diff}px)` }
+        const diff = getTranslate(index)
+        return diff ? { transform: `translateY(${diff}px)` } : null
       })
       styles[this.fromIndex] = {
         ...this.draggingStyle,
@@ -113,6 +131,7 @@ export default Vue.extend({
 }
 .items {
   width: 160px;
+  margin: 100px 0;
   li:not(.isDragging) {
     transition: ease-out 0.2s;
   }
@@ -129,11 +148,13 @@ export default Vue.extend({
     cursor: pointer;
     user-select: none;
     background: #fff;
+    z-index: 1000;
 
     &.isDragging {
       position: absolute;
       background: #ffc;
-      z-index: 1000;
+      z-index: 1;
+      box-shadow: 4px 4px 4px rgba(#666, 0.2);
     }
     // &:nth-child(2) {
     //   height: 100px;
