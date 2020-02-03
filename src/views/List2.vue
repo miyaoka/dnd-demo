@@ -29,9 +29,34 @@ export default Vue.extend({
       dragStartY: 0,
       deltaY: 0,
       selectedIndex: -1,
-      draggingStyles: [] as (Record<string, string> | null)[],
       draggingStyle: null as Record<string, string> | null,
       draggingRect: {} as { width: number; height: number }
+    }
+  },
+  computed: {
+    draggingStyles(): (Record<string, string> | null)[] {
+      if (this.fromIndex < 0) return []
+
+      const getTranslate = (index: number) => {
+        // ドラッグ要素
+        if (this.fromIndex === index) return this.deltaY
+        // ドラッグ要素より前の要素はindex加算
+        const adjustedIndex = index < this.fromIndex ? index + 1 : index
+        // ドラッグ先より後ろの要素はずらす
+        if (adjustedIndex > this.toIndex) return this.draggingRect.height
+        // それ以外はstyle設定しない
+        return null
+      }
+
+      const styles = this.list.map((_item, index) => {
+        const diff = getTranslate(index)
+        return diff ? { transform: `translateY(${diff}px)` } : null
+      })
+      styles[this.fromIndex] = {
+        ...this.draggingStyle,
+        ...styles[this.fromIndex]
+      }
+      return styles
     }
   },
   methods: {
@@ -78,34 +103,9 @@ export default Vue.extend({
       this.toIndex =
         this.fromIndex +
         Math.floor(this.deltaY / this.draggingRect.height + 0.5)
-
-      const getTranslate = (index: number) => {
-        // ドラッグ要素
-        if (this.fromIndex === index) return this.deltaY
-        // ドラッグ要素より前の要素はindex加算
-        const adjustedIndex = index < this.fromIndex ? index + 1 : index
-        // ドラッグ先より後ろの要素はずらす
-        if (adjustedIndex > this.toIndex) return this.draggingRect.height
-        // それ以外はstyle設定しない
-        return null
-      }
-
-      const styles = this.list.map((_item, index) => {
-        const diff = getTranslate(index)
-        return diff ? { transform: `translateY(${diff}px)` } : null
-      })
-      styles[this.fromIndex] = {
-        ...this.draggingStyle,
-        ...styles[this.fromIndex]
-      }
-      this.draggingStyles = styles
     },
     onDragEnd(e: MouseEvent) {
       this.list = mv(this.list, this.fromIndex, this.toIndex)
-      this.draggingStyles = []
-      this.draggingStyles[this.fromIndex] = {
-        transition: 'none'
-      }
       this.fromIndex = this.toIndex = -1
       this.deltaY = 0
       console.log('dragEnd')
@@ -143,7 +143,7 @@ export default Vue.extend({
     border: 1px solid #666;
     padding: 10px;
     margin: 0;
-    height: 40px;
+    height: 100px;
     box-sizing: border-box;
     cursor: pointer;
     user-select: none;
